@@ -82,6 +82,10 @@ class CSVViewer(QWidget):
         self.table.setColumnCount(len(self.df.columns))
         self.table.setHorizontalHeaderLabels(self.df.columns)
 
+        # Update column selector
+        self.column_selector.clear()
+        self.column_selector.addItems(self.df.columns)
+
         self.update_table()
 
     def update_table(self):
@@ -90,14 +94,11 @@ class CSVViewer(QWidget):
                 item = QTableWidgetItem(str(self.df.iat[row, col]))
                 self.table.setItem(row, col, item)
 
-        # Update column selector
-        self.column_selector.clear()
-        self.column_selector.addItems(self.df.columns)
-
         # Update statistics for the first column
         self.update_statistics()
 
     def update_statistics(self):
+
         self.col_name = self.column_selector.currentText()
         if self.col_name:
 
@@ -126,7 +127,7 @@ class CSVViewer(QWidget):
 
             dataRow1 = ""
             if col_type == "pnum":
-                dataRow1 = f"Type: Numerical\nNo of Missing/Null Values: {missing_count}\nStats: ..."
+                dataRow1 = f"Type: Numerical\nNo of Missing/Null Values: {missing_count}\n\n" + self.update_stats_table()
                 self.convert_to_num_btn.hide()
                 self.kde_plot.plot_kde(self.df, self.col_name)
                 self.kde_plot.show()
@@ -138,12 +139,6 @@ class CSVViewer(QWidget):
                 dataRow1 = f"Type: Non numeric\nNo of Missing/Null Values: {missing_count}\nCount: {self.df[self.col_name].count()}\nUnique: {self.df[self.col_name].nunique()}"
                 self.convert_to_num_btn.hide()
                 self.kde_plot.hide()
-
-            '''  col_data = pd.to_numeric(self.df[col_name], errors='coerce').dropna()
-            if not col_data.empty:
-                stats = dataRow1 + f"Mean: {col_data.mean():.2f}, Min: {col_data.min()}, Max: {col_data.max()}"
-            else:
-                stats = dataRow1 + "Selected column is non-numeric."'''
 
             self.stats_label.setText(dataRow1)
 
@@ -183,3 +178,12 @@ class CSVViewer(QWidget):
     def convert_column(self):
         self.df[self.col_name] = pd.to_numeric(self.df[self.col_name].apply(self.clean_numeric), errors='coerce')
         self.update_table()
+
+    def update_stats_table(self):
+        col = self.df[self.col_name]
+        count = col.count()
+        min = col.min()
+        max = col.max()
+        mean = col.mean()
+        var = col.var()
+        return f"Count: {count}\nMin: {min}\nMax: {max}\nMean: {mean:.2f}\nVariance: {var:.2f}"

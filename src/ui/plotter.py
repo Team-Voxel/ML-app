@@ -20,5 +20,6 @@ class KDEPlotWidget(QWidget):
 
     def plot_kde(self, df, column_name):
         self.ax.clear()
-        df[column_name].plot(kind="kde", ax=self.ax, title=f"KDE of '{column_name}'")
+        df[column_name].plot(kind="hist", ax=self.ax, title=f"KDE of '{column_name}'")
+        df[column_name].hist(density=True, ax=self.ax, bins=20, alpha=0.5)
         self.canvas.draw()
