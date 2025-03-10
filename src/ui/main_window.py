@@ -3,13 +3,16 @@
 import sys
 from PySide6.QtWidgets import QApplication, QMainWindow, QMenu
 from PySide6.QtCore import Qt, QPoint
-from UI_form import Ui_MainWindow
-
+from src.ui.UI_form import Ui_MainWindow
+import src.modules.file_system as fs
+import src.ui.styles as styles
+from src.ui.csv_viewer import CSVViewer
 from PySide6.QtGui import QAction  # QAction is in QtGui
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.viewer = None
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
@@ -38,54 +41,9 @@ class MainWindow(QMainWindow):
         # Create the File menu
         file_menu = QMenu(self)
 
-              # Style the menu and toolbutton
-        menu_style = """
-            QPushButton {
-                background-color: transparent;
-                font-size: 13px;
-                border: none;
-                padding: 5px;
-                border-radius: 3px;
-            }
-
-
-            
-            QPushButton:hover {
-                background-color: #41464a;
-            }
-            
-            QPushButton::menu-indicator {
-                image: none;
-                width:0;
-            }
-            
-            QMenu {
-                background-color: #2d3136;
-                color: white;
-                border:none;
-                border-radius: 4px;
-                padding: 5px;
-            }
-            
-            QMenu::item {
-                padding: 5px 30px 5px 20px;
-                border-radius: 3px;
-            }
-            
-            QMenu::item:selected {
-                background-color: #41464a;
-            }
-            
-            QMenu::separator {
-                height: 1px;
-                background-color: #41464a;
-                margin: 5px 0px;
-            }
-        """
-        
         # Apply the styles
-        self.ui.file_menu_btn.setStyleSheet(menu_style)
-        file_menu.setStyleSheet(menu_style)
+        self.ui.file_menu_btn.setStyleSheet(styles.menu_style)
+        file_menu.setStyleSheet(styles.menu_style)
         
         # Create actions
         new_action = QAction("New", self)
@@ -115,15 +73,16 @@ class MainWindow(QMainWindow):
 
     # Add these methods to your MainWindow class:
     def new_file(self):
-        # Implement new file functionality
+        # Open a new project
         pass
 
     def open_file(self):
-        # Implement open file functionality
-        pass
+        # Open a new file or project
+        self.viewer = CSVViewer()
+        self.viewer.show()
 
     def save_file(self):
-        # Implement save functionality
+        # Save current file
         pass
 
     def save_as_file(self):

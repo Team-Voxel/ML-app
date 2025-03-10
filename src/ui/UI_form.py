@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
     QSpacerItem, QSplitter, QTabWidget, QVBoxLayout,
     QWidget)
 
-from terminal import terminal_widget
+from src.ui.terminal import terminal_widget
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -486,6 +486,7 @@ class Ui_MainWindow(object):
         self.maximize_btn.setText("")
         self.close_btn.setText("")
         self.explorer_btn.setText("")
+        self.explorer_btn.actions()
         self.import_btn.setText("")
         self.play_btn.setText("")
         self.settings_btn.setText("")
