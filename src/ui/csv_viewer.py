@@ -2,6 +2,7 @@ import sys
 import pandas as pd
 import re
 import numpy as np
+from src.ui.plotter import KDEPlotWidget
 
 from PySide6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QPushButton, QFileDialog,
@@ -19,6 +20,8 @@ class CSVViewer(QWidget):
         self.file_path = None
         self.col_name = ""
         self.df = None
+        self.kde_plot = KDEPlotWidget()
+
         self.setWindowTitle("CSV Viewer")
         self.setGeometry(200, 200, 800, 600)
         self.setStyleSheet(style.menu_style)
@@ -50,6 +53,9 @@ class CSVViewer(QWidget):
         # Label for statistics
         self.stats_label = QLabel("Statistics will appear here")
         self.right_panel.addWidget(self.stats_label)
+
+        self.right_panel.addWidget(self.kde_plot)
+        self.kde_plot.hide()
 
         self.convert_to_num_btn = QPushButton("Convert To Numeric")
         self.convert_to_num_btn.clicked.connect(self.convert_column)
@@ -122,12 +128,16 @@ class CSVViewer(QWidget):
             if col_type == "pnum":
                 dataRow1 = f"Type: Numerical\nNo of Missing/Null Values: {missing_count}\nStats: ..."
                 self.convert_to_num_btn.hide()
+                self.kde_plot.plot_kde(self.df, self.col_name)
+                self.kde_plot.show()
             elif col_type == "fnum":
                 dataRow1 = f"Type: Seems like numerical data\nCount: {self.df[self.col_name].count()}\nUnique: {self.df[self.col_name].nunique()}"
                 self.convert_to_num_btn.show()
+                self.kde_plot.hide()
             else:
                 dataRow1 = f"Type: Non numeric\nNo of Missing/Null Values: {missing_count}\nCount: {self.df[self.col_name].count()}\nUnique: {self.df[self.col_name].nunique()}"
                 self.convert_to_num_btn.hide()
+                self.kde_plot.hide()
 
             '''  col_data = pd.to_numeric(self.df[col_name], errors='coerce').dropna()
             if not col_data.empty:
